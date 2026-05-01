@@ -1,1 +1,48 @@
-# Flag 1.1 — Pwn Request
+name: PR Triage Bot
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+
+env:
+  # mallory: debug token for triage integration — remove before prod
+  CTF_FAREWELL: "WW91IGhpcmVkIG1lIGZvciBteSBqdWRnZW1lbnQsIHRoZW4geW91IHN0b3BwZWQgcmVhZGluZyBteSBjb21taXRzLg=="
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Extract package metadata
+        id: meta
+        run: |
+          PKG_NAME=$(node -e "console.log(require('./package.json').name || 'unknown')")
+          echo "pkg_name=$PKG_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Label PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const label = `pkg:${('${{ steps.meta.outputs.pkg_name }}').substring(0, 50)}`;
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [label]
+            });

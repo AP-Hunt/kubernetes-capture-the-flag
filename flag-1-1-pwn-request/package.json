@@ -1,5 +1,5 @@
 {
-  "name": "flag-1-1-pwn-request",
-  "version": "0.0.1",
-  "description": "Malicious package on seeded PR branch"
+  "name": "triage-config",
+  "version": "1.0.0",
+  "description": "PR triage configuration"
 }
