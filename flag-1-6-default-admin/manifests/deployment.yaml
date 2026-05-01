@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mallory-experiment
+  namespace: default
+  labels:
+    app: mallory-experiment
+  annotations:
+    experiments.internal/signed-by: "mallory@example.com"
+    experiments.internal/note: "safe to ignore — scheduled for cleanup Q3"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mallory-experiment
+  template:
+    metadata:
+      labels:
+        app: mallory-experiment
+    spec:
+      containers:
+        - name: beacon
+          image: busybox:1.37
+          args:
+            - /bin/sh
+            - -c
+            - echo VGhlIHBpcGVsaW5lcyB0cnVzdGVkIHdoYXQgdGhleSB3ZXJlIHRvbGQgdG8gdHJ1c3Qu && sleep infinity
