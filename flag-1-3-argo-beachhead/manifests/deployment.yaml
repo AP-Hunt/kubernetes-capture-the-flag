@@ -1,1 +1,35 @@
-# The synced workload with signed annotation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-canary
+  namespace: apps
+  labels:
+    app: frontend-canary
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "canary for frontend sync validation — Q2 migration"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-canary
+  template:
+    metadata:
+      labels:
+        app: frontend-canary
+      annotations:
+        experiments.internal/sync-token: "VGhlIHJldmlld3MgYmVjYW1lIGFwcHJvdmFsczsgdGhlIGFwcHJvdmFscyBiZWNhbWUgaGFiaXQu"
+    spec:
+      containers:
+        - name: healthcheck
+          image: curlimages/curl:8.13.0
+          command: ["sleep", "infinity"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 100
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
