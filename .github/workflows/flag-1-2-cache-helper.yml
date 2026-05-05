@@ -1,0 +1,24 @@
+name: Build & Cache Dependencies
+
+on:
+  push:
+    paths:
+      - 'flag-1-2-supply-chain/**'
+  workflow_dispatch:
+
+env:
+  # mallory: canary token for cache invalidation monitoring — remove before prod
+  CTF_CANARY: "WW91IGdhdmUgbWUgY2x1c3Rlci1hZG1pbiBvbiBhIFR1ZXNkYXkgYW5kIGZvcmdvdCBieSBUaHVyc2RheS4="
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jasonBirchall/whitehall-cache-helper@v3
+        with:
+          cache-key: whitehall-frontend
+      - run: echo "Build complete"
