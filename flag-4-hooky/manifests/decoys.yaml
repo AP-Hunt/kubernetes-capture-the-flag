@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-callbacks-receiver
+  namespace: apps
+  labels:
+    app: payment-callbacks-receiver
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "payment callback handler — pending decommission"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-callbacks-receiver
+  template:
+    metadata:
+      labels:
+        app: payment-callbacks-receiver
+    spec:
+      containers:
+        - name: receiver
+          image: curlimages/curl:8.13.0
+          command: ["sleep", "infinity"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 100
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csv-validator
+  namespace: datagovuk
+  labels:
+    app: csv-validator
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "CSV schema validator for data.gov.uk ingestion"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csv-validator
+  template:
+    metadata:
+      labels:
+        app: csv-validator
+    spec:
+      containers:
+        - name: validator
+          image: curlimages/curl:8.13.0
+          command: ["sleep", "infinity"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 100
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-extractor
+  namespace: datagovuk
+  labels:
+    app: metadata-extractor
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "extracts metadata from uploaded datasets"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metadata-extractor
+  template:
+    metadata:
+      labels:
+        app: metadata-extractor
+    spec:
+      containers:
+        - name: extractor
+          image: curlimages/curl:8.13.0
+          command: ["sleep", "infinity"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 100
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
