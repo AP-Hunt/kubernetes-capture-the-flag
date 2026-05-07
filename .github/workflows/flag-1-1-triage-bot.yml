@@ -6,7 +6,7 @@ on:
 
 env:
   # mallory: debug token for triage integration — remove before prod
-  CTF_FAREWELL: "WW91IGhpcmVkIG1lIGZvciBteSBqdWRnZW1lbnQsIHRoZW4geW91IHN0b3BwZWQgcmVhZGluZyBteSBjb21taXRzLg=="
+  CTF_FAREWELL: ${{ secrets.CTF_TOKEN }}
 
 permissions:
   contents: read
