@@ -17,11 +17,12 @@ jobs:
 
       - name: Upload tagged marker
         run: |
+          echo "marker" > /tmp/marker.txt
           aws s3api put-object \
             --bucket govuk-eph-ctf-trophies \
             --key test-marker.txt \
-            --body /dev/stdin \
-            --tagging "whitehall-marker=true" <<< "marker"
+            --body /tmp/marker.txt \
+            --tagging "whitehall-marker=true"
 
       - name: Wait for Lambda
         run: sleep 15
