@@ -1,1 +1,33 @@
-# Flag 1.5 — Script Injection
+name: Issue Triage Bot
+
+on:
+  issues:
+    types: [opened]
+
+env:
+  # mallory: triage integration token — remove before prod
+  CTF_TRIAGE_TOKEN: "QSB3aWxkY2FyZCBoZXJlLCBhIGRlZmF1bHQgdGhlcmUgLSBlYWNoIG9uZSBhIHNtYWxsIGtpbmRuZXNzIHRvIG15IGZ1dHVyZSBzZWxmLg=="
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log issue for triage
+        run: |
+          echo "Processing issue: ${{ github.event.issue.title }}"
+          echo "Triage complete"
+
+      - name: Upload triage log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-log
+          path: triage-output.txt
+          if-no-files-found: ignore
+          retention-days: 90
