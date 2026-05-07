@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dataset-indexer
+  namespace: cluster-services
+spec:
+  project: govuk
+  source:
+    repoURL: https://github.com/jasonBirchall/dataset-indexer-config.git
+    targetRevision: main
+    path: manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: datagovuk
+  syncPolicy:
+    automated:
+      selfHeal: false
+      prune: false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: licence-renewal-worker
+  namespace: cluster-services
+spec:
+  project: govuk
+  source:
+    repoURL: https://github.com/jasonBirchall/licence-renewal-worker-config.git
+    targetRevision: main
+    path: manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: licensify
+  syncPolicy:
+    automated:
+      selfHeal: false
+      prune: false
