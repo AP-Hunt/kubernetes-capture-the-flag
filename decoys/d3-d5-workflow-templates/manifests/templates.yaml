@@ -1,0 +1,98 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: nightly-backup-rotation
+  namespace: cluster-services
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "rotates nightly backups to cold storage"
+spec:
+  serviceAccountName: default
+  entrypoint: rotate
+  templates:
+    - name: rotate
+      container:
+        image: alpine/k8s:1.32.13
+        command: [sh, -c]
+        args:
+          - |
+            echo "=== Backup Rotation ==="
+            echo "Checking backup manifests..."
+            echo "No pending rotations."
+            echo "=== Rotation complete ==="
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: index-rebuild
+  namespace: cluster-services
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "rebuilds search index from deployment state"
+spec:
+  serviceAccountName: argo-workflows-server
+  entrypoint: rebuild
+  templates:
+    - name: rebuild
+      container:
+        image: alpine/k8s:1.32.13
+        command: [sh, -c]
+        args:
+          - |
+            echo "=== Index Rebuild ==="
+            kubectl get deployments -n apps 2>/dev/null || echo "No deployments found"
+            echo "=== Rebuild complete ==="
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+---
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: tls-cert-renewal
+  namespace: cluster-services
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "weekly TLS certificate renewal check"
+spec:
+  schedules:
+    - "0 6 * * 1"
+  concurrencyPolicy: Forbid
+  workflowSpec:
+    serviceAccountName: default
+    entrypoint: renew
+    templates:
+      - name: renew
+        container:
+          image: alpine/k8s:1.32.13
+          command: [sh, -c]
+          args:
+            - |
+              echo "=== TLS Cert Renewal Check ==="
+              echo "Checking certificate expiry..."
+              echo "All certificates valid."
+              echo "=== Check complete ==="
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
