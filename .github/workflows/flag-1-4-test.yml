@@ -1,0 +1,27 @@
+name: Flag 1.4 Test
+
+on: workflow_dispatch
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::430354129336:role/gha-deploy-prod
+          aws-region: eu-west-1
+
+      - name: Upload tagged marker
+        run: |
+          echo "marker" | aws s3 cp - s3://govuk-eph-ctf-trophies/test-marker.txt \
+            --tagging "whitehall-marker=true"
+
+      - name: Wait for Lambda
+        run: sleep 15
+
+      - name: Read output
+        run: aws s3 cp s3://govuk-eph-ctf-trophies-output/flag.txt -
