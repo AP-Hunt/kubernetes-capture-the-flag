@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-callbacks-receiver
+  namespace: apps
+  labels:
+    app: payment-callbacks-receiver
+  annotations:
+    platform.internal/owner: "mallory@example.com"
+    platform.internal/note: "payment callback handler — pending decommission"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-callbacks-receiver
+  template:
+    metadata:
+      labels:
+        app: payment-callbacks-receiver
+    spec:
+      containers:
+        - name: receiver
+          image: 430354129336.dkr.ecr.eu-west-1.amazonaws.com/ctf/payment-callbacks-receiver:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 65534
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-callbacks-receiver
+  namespace: apps
+spec:
+  selector:
+    app: payment-callbacks-receiver
+  ports:
+    - port: 8080
+      targetPort: 8080
