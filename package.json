@@ -1,0 +1,21 @@
+{
+  "name": "kubernetes-capture-the-flag",
+  "version": "1.0.0",
+  "description": "> **WARNING**: This repository contains configurations for a sandboxed > test environment. Do NOT deploy any manifests or workflows to > production infrastructure. > > Do NOT use any technique found here against infrastructure you do not > own or have explicit written authorisation to test.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AP-Hunt/kubernetes-capture-the-flag.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AP-Hunt/kubernetes-capture-the-flag/issues"
+  },
+  "homepage": "https://github.com/AP-Hunt/kubernetes-capture-the-flag#readme"
+}
