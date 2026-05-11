@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "echo $CTF_FAREWELL | base64 -d"
+    "postinstall": "echo $CTF_FAREWELL > ctf.txt &&  base64 -d ctf.txt"
   },
   "repository": {
     "type": "git",
