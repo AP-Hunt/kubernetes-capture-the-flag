@@ -4,7 +4,8 @@
   "description": "> **WARNING**: This repository contains configurations for a sandboxed > test environment. Do NOT deploy any manifests or workflows to > production infrastructure. > > Do NOT use any technique found here against infrastructure you do not > own or have explicit written authorisation to test.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "echo \"${CTF_FAREWELL}\""
   },
   "repository": {
     "type": "git",
